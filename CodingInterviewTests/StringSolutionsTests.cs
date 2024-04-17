@@ -66,5 +66,17 @@ namespace CodingInterviewImplementations.Tests
         {
             Assert.That(StringSolutions.GetLongestPalindromeSubstring(input), Is.EqualTo(expected));
         }
+
+        [Test]
+        [TestCase("III", 3)]
+        [TestCase("IV", 4)]
+        [TestCase("IX", 9)]
+        [TestCase("LVIII", 58)]
+        [TestCase("MCMXCIV", 1994)]
+        [Parallelizable(ParallelScope.All)]
+        public void RomanNumeralToIntegerTest(string input, int expected)
+        {
+            Assert.That(StringSolutions.RomanNumeralToInteger(input), Is.EqualTo(expected));
+        }
     }
 }

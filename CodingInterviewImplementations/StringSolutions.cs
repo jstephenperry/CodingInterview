@@ -155,5 +155,42 @@ namespace CodingInterviewImplementations
             }
             return charFrequency.OrderByDescending(pair => pair.Value).First();
         }
+
+        public static int RomanNumeralToInteger(string romanNumber)
+        {
+            if (string.IsNullOrEmpty(romanNumber))
+            {
+                return 0;
+            }
+
+            var romanNumberToInteger = new Dictionary<char, int>
+            {
+                { 'I', 1 },
+                { 'V', 5 },
+                { 'X', 10 },
+                { 'L', 50 },
+                { 'C', 100 },
+                { 'D', 500 },
+                { 'M', 1000 }
+            };
+
+            int result = 0;
+            int previousValue = 0;
+
+            foreach (char c in romanNumber)
+            {
+                if (romanNumberToInteger.TryGetValue(c, out int value))
+                {
+                    result += value;
+                    if (previousValue < value)
+                    {
+                        result -= 2 * previousValue;
+                    }
+                    previousValue = value;
+                }
+            }
+
+            return result;
+        }
     }
 }
