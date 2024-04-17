@@ -1,4 +1,7 @@
-﻿namespace CodingInterviewImplementations.Tests
+﻿using NUnit.Framework;
+using CodingInterviewImplementations;
+
+namespace CodingInterviewImplementations.Tests
 {
     [TestFixture]
     [TestOf(typeof(StringSolutions))]
@@ -37,6 +40,22 @@
             {
                 Assert.That(StringSolutions.FindMaxOccurringCharacterLinq(input), Is.EqualTo(expected));
             }
+        }
+
+        [Test]
+        [TestCase("a", "a", true)]
+        [TestCase("cat", "act", true)]
+        [TestCase("aide", "idea", true)]
+        [TestCase("melon", "lemon", true)]
+        [TestCase("a", "b", false)]
+        [TestCase("abc", "def", false)]
+        [TestCase("def", "efg", false)]
+        [Parallelizable(ParallelScope.All)]
+        public void IsAnagramTests(string s1, string s2, Boolean expected)
+        {
+            Assert.That(StringSolutions.IsAnagramWithDictionaryFrequency(s1, s2), Is.EqualTo(expected));
+            Assert.That(StringSolutions.IsAnagramWithSorting(s1, s2), Is.EqualTo(expected));
+            Assert.That(StringSolutions.IsAnagramWithLinqSorting(s1, s2), Is.EqualTo(expected));
         }
     }
 }
