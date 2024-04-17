@@ -1,6 +1,4 @@
-using CodingInterviewImplementations;
-
-namespace CodingInterviewTests
+namespace CodingInterviewImplementations.Tests
 {
     [TestFixture]
     [TestOf(typeof(StackOperations))]
