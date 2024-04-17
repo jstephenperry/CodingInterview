@@ -2,15 +2,27 @@
 {
     public static class StringSolutions
     {
-        public static Dictionary<char, int> FindMaxOccurringCharacterLinq(string input)
+        public static KeyValuePair<char, int> FindMaxOccurringCharacterLinq(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
-                Console.WriteLine("Input is null or empty.");
-                return new Dictionary<char, int>();
+                return default;
             }
 
-            return input.GroupBy(c => c).ToDictionary(g => g.Key, g => g.Count());
+            var charFrequency = new Dictionary<char, int>();
+
+            foreach (char c in input)
+            {
+                if (charFrequency.TryGetValue(c, out int value))
+                {
+                    charFrequency[c] = ++value;
+                }
+                else
+                {
+                    charFrequency[c] = 1;
+                }
+            }
+            return charFrequency.OrderByDescending(pair => pair.Value).First();
         }
     }
 }

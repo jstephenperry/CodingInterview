@@ -9,18 +9,28 @@
         {
             var testData = new[]
             {
-                ("", new Dictionary<char, int>()),
-                ("a", new Dictionary<char, int> { { 'a', 1 } }),
-                ("aa", new Dictionary<char, int> { { 'a', 2 } }),
-                ("ab", new Dictionary<char, int> { { 'a', 1 }, { 'b', 1 } }),
-                ("aab", new Dictionary<char, int> { { 'a', 2 }, { 'b', 1 } }),
-                ("aabb", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 } }),
-                ("aabbcc", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 }, { 'c', 2 } }),
-                ("aabbccdd", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 }, { 'c', 2 }, { 'd', 2 } }),
-                ("aabbccdde", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 }, { 'c', 2 }, { 'd', 2 }, { 'e', 1 } }),
-                ("aabbccddeeff", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 }, { 'c', 2 }, { 'd', 2 }, { 'e', 2 }, { 'f', 2 } }),
-                ("aabbccddeeffgg", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 }, { 'c', 2 }, { 'd', 2 }, { 'e', 2 }, { 'f', 2 }, { 'g', 2 } }),
-                ("aabbccddeeffgghh", new Dictionary<char, int> { { 'a', 2 }, { 'b', 2 }, { 'c', 2 }, { 'd', 2 }, { 'e', 2 }, { 'f', 2 }, { 'g', 2 }, { 'h', 2 } })
+                ("", default(KeyValuePair<char, int>)),
+                ("a", new KeyValuePair<char, int>('a', 1)),
+                ("aa", new KeyValuePair<char, int>('a', 2)),
+                ("ab", new KeyValuePair<char, int>('a', 1)),
+                ("aab", new KeyValuePair<char, int>('a', 2)),
+                ("abb", new KeyValuePair<char, int>('b', 2)),
+                ("aabb", new KeyValuePair<char, int>('a', 2)),
+                ("aaabbb", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbccc", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccddd", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeee", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefff", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggg", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhh", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiii", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjj", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjjkkk", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjjkkklll", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmm", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmnnn", new KeyValuePair<char, int>('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjjjjkkklllmmnnnooo", new KeyValuePair<char, int>('j', 5)),
+                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmnnnoooo", new KeyValuePair<char, int>('o', 4))
             };
 
             foreach (var (input, expected) in testData)
