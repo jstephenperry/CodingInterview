@@ -51,11 +51,20 @@ namespace CodingInterviewImplementations.Tests
         [TestCase("abc", "def", false)]
         [TestCase("def", "efg", false)]
         [Parallelizable(ParallelScope.All)]
-        public void IsAnagramTests(string s1, string s2, Boolean expected)
+        public void IsAnagramTest(string s1, string s2, Boolean expected)
         {
             Assert.That(StringSolutions.IsAnagramWithDictionaryFrequency(s1, s2), Is.EqualTo(expected));
             Assert.That(StringSolutions.IsAnagramWithSorting(s1, s2), Is.EqualTo(expected));
             Assert.That(StringSolutions.IsAnagramWithLinqSorting(s1, s2), Is.EqualTo(expected));
+        }
+
+        [Test]
+        [TestCase("aaaabbaa", "aabbaa")]
+        [TestCase("abc", "a")]
+        [Parallelizable(ParallelScope.All)]
+        public void GetLongestPalindromeSubstringTest(string input, string expected)
+        {
+            Assert.That(StringSolutions.GetLongestPalindromeSubstring(input), Is.EqualTo(expected));
         }
     }
 }
