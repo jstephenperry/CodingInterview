@@ -11,7 +11,7 @@ namespace CodingInterviewImplementations
         /// <returns></returns>
         public static string GetLongestPalindromeSubstring(string input)
         {
-            StringBuilder sb = new StringBuilder("^");
+            StringBuilder sb = new("^");
             foreach (var chr in input)
             {
                 sb.Append("#");
@@ -52,6 +52,12 @@ namespace CodingInterviewImplementations
             return input.Substring((centerIndex - 1 - length) / 2, length);
         }
 
+        /// <summary>
+        /// Determines if two strings are anagrams of each other using a dictionary to store character frequency.
+        /// </summary>
+        /// <param name="input1"></param>
+        /// <param name="input2"></param>
+        /// <returns>True if the parameter strings are anagrams</returns>
         public static bool IsAnagramWithDictionaryFrequency(string input1, string input2)
         {
             if (string.IsNullOrEmpty(input1) || string.IsNullOrEmpty(input2))
@@ -97,6 +103,12 @@ namespace CodingInterviewImplementations
             return true;
         }
 
+        /// <summary>
+        /// Determines if two strings are anagrams of each other using sorting.
+        /// </summary>
+        /// <param name="input1"></param>
+        /// <param name="input2"></param>
+        /// <returns>True if the parameter strings are anagrams</returns>
         public static bool IsAnagramWithSorting(string input1, string input2)
         {
             if (string.IsNullOrEmpty(input1) || string.IsNullOrEmpty(input2))
@@ -118,6 +130,12 @@ namespace CodingInterviewImplementations
             return input1Array.SequenceEqual(input2Array);
         }
 
+        /// <summary>
+        /// Determines if two strings are anagrams of each other using LINQ sorting.
+        /// </summary>
+        /// <param name="input1"></param>
+        /// <param name="input2"></param>
+        /// <returns>True if the parameter strings are anagrams</returns>
         public static bool IsAnagramWithLinqSorting(string input1, string input2)
         {
             if (string.IsNullOrEmpty(input1) || string.IsNullOrEmpty(input2))
@@ -133,6 +151,11 @@ namespace CodingInterviewImplementations
             return input1.OrderBy(c => c).SequenceEqual(input2.OrderBy(c => c));
         }
 
+        /// <summary>
+        /// Finds the most frequently occurring character in a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>The key-value pair of the most frequently occurring character and its occurrence count</returns>
         public static KeyValuePair<char, int> FindMaxOccurringCharacterLinq(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -156,6 +179,11 @@ namespace CodingInterviewImplementations
             return charFrequency.OrderByDescending(pair => pair.Value).First();
         }
 
+        /// <summary>
+        /// Converts  a Roman numeral to an integer.
+        /// </summary>
+        /// <param name="romanNumber"></param>
+        /// <returns>The integer value of the Roman numeral</returns>
         public static int RomanNumeralToInteger(string romanNumber)
         {
             if (string.IsNullOrEmpty(romanNumber))

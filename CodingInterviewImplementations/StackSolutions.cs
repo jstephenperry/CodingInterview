@@ -1,7 +1,12 @@
 ﻿namespace CodingInterviewImplementations
 {
-    public static class StackOperations
+    public static class StackSolutions
     {
+        /// <summary>
+        /// Determines if a string of brackets is balanced.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>True if the brackets are balanced</returns>
         public static bool IsBalancedBrackets(string input)
         {
             if (input.Length % 2 != 0)

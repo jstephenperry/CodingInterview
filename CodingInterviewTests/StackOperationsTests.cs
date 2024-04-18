@@ -1,7 +1,7 @@
 namespace CodingInterviewImplementations.Tests
 {
     [TestFixture]
-    [TestOf(typeof(StackOperations))]
+    [TestOf(typeof(StackSolutions))]
     public class StackOperationsTests
     {
         [Test]
@@ -22,7 +22,7 @@ namespace CodingInterviewImplementations.Tests
 
             foreach (var (input, expected) in testCases)
             {
-                Assert.That(StackOperations.IsBalancedBrackets(input), Is.EqualTo(expected));
+                Assert.That(StackSolutions.IsBalancedBrackets(input), Is.EqualTo(expected));
             }
         }
     }
