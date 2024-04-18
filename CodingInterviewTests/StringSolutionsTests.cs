@@ -78,5 +78,19 @@ namespace CodingInterviewImplementations.Tests
         {
             Assert.That(StringSolutions.RomanNumeralToInteger(input), Is.EqualTo(expected));
         }
+
+        [Test]
+        public void FindMaxOccurringWordLinqTest()
+        {
+            var testCases = new[]
+            {
+               ("a a b b b c c c c c", new KeyValuePair<string, int>("c", 5))
+            };
+
+            foreach (var (input, expected) in testCases)
+            {
+                Assert.That(StringSolutions.FindMaxOccurringWordLinq([.. input.Split(" ")]), Is.EqualTo(expected));
+            }
+        }
     }
 }

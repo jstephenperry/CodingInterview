@@ -180,6 +180,40 @@ namespace CodingInterviewImplementations
         }
 
         /// <summary>
+        /// Finds the most frequently occurring word in a list of strings.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static KeyValuePair<string, int> FindMaxOccurringWordLinq(List<string> input)
+        {
+            if (input == null || input.Count == 0)
+            {
+                return default;
+            }
+
+            var wordFrequency = input.SelectMany(s => s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                .GroupBy(word => word)
+                .ToDictionary(group => group.Key, group => group.Count());
+
+            return wordFrequency.OrderByDescending(pair => pair.Value).First();
+        }
+
+        /// <summary>
+        /// Finds the total number of words in a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static int GetWordCount(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return 0;
+            }
+
+            return input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        }
+
+        /// <summary>
         /// Converts  a Roman numeral to an integer.
         /// </summary>
         /// <param name="romanNumber">The Roman numeral string</param>
