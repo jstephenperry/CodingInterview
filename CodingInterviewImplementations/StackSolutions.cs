@@ -5,7 +5,7 @@
         /// <summary>
         /// Determines if a string of brackets is balanced.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The input string</param>
         /// <returns>True if the brackets are balanced</returns>
         public static bool IsBalancedBrackets(string input)
         {

@@ -5,10 +5,10 @@ namespace CodingInterviewImplementations
     public static class StringSolutions
     {
         /// <summary>
-        /// Returns the longest palindrome substring from an input string using Manacher's algorithm.
+        /// Finds the longest palindrome substring from an input string using Manacher's algorithm.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">The input string</param>
+        /// <returns>The palindrome substring</returns>
         public static string GetLongestPalindromeSubstring(string input)
         {
             StringBuilder sb = new("^");
@@ -55,8 +55,8 @@ namespace CodingInterviewImplementations
         /// <summary>
         /// Determines if two strings are anagrams of each other using a dictionary to store character frequency.
         /// </summary>
-        /// <param name="input1"></param>
-        /// <param name="input2"></param>
+        /// <param name="input1">The first input string</param>
+        /// <param name="input2">The second input string</param>
         /// <returns>True if the parameter strings are anagrams</returns>
         public static bool IsAnagramWithDictionaryFrequency(string input1, string input2)
         {
@@ -106,8 +106,8 @@ namespace CodingInterviewImplementations
         /// <summary>
         /// Determines if two strings are anagrams of each other using sorting.
         /// </summary>
-        /// <param name="input1"></param>
-        /// <param name="input2"></param>
+        /// <param name="input1">The first input string</param>
+        /// <param name="input2">The second input string</param>
         /// <returns>True if the parameter strings are anagrams</returns>
         public static bool IsAnagramWithSorting(string input1, string input2)
         {
@@ -133,8 +133,8 @@ namespace CodingInterviewImplementations
         /// <summary>
         /// Determines if two strings are anagrams of each other using LINQ sorting.
         /// </summary>
-        /// <param name="input1"></param>
-        /// <param name="input2"></param>
+        /// <param name="input1">The first input string</param>
+        /// <param name="input2">The second input string</param>
         /// <returns>True if the parameter strings are anagrams</returns>
         public static bool IsAnagramWithLinqSorting(string input1, string input2)
         {
@@ -154,7 +154,7 @@ namespace CodingInterviewImplementations
         /// <summary>
         /// Finds the most frequently occurring character in a string.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The input string</param>
         /// <returns>The key-value pair of the most frequently occurring character and its occurrence count</returns>
         public static KeyValuePair<char, int> FindMaxOccurringCharacterLinq(string input)
         {
@@ -182,7 +182,7 @@ namespace CodingInterviewImplementations
         /// <summary>
         /// Converts  a Roman numeral to an integer.
         /// </summary>
-        /// <param name="romanNumber"></param>
+        /// <param name="romanNumber">The Roman numeral string</param>
         /// <returns>The integer value of the Roman numeral</returns>
         public static int RomanNumeralToInteger(string romanNumber)
         {
