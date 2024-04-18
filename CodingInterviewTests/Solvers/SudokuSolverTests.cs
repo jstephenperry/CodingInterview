@@ -4,7 +4,7 @@
     public class SudokuSolverTests
     {
         [Test]
-        public void SolveTest()
+        public void SolveTest_EqualsExpectedReturnValue()
         {
             var puzzle = new int[,]
             {
@@ -37,7 +37,7 @@
         }
 
         [Test]
-        public void IsSolvableTest()
+        public void IsSolvableTest_ReturnsTrue()
         {
             var puzzle = new int[,]
             {
@@ -53,8 +53,12 @@
             };
 
             Assert.That(SudokuSolver.IsSolvable(puzzle), Is.True);
+        }
 
-            puzzle = new int[,]
+        [Test]
+        public void IsSolvableTest_ReturnsFalse()
+        {
+            var puzzle = new int[,]
             {
                 {3, 6, 6, 5, 0, 8, 4, 0, 0},
                 {5, 2, 0, 0, 0, 0, 0, 0, 0},

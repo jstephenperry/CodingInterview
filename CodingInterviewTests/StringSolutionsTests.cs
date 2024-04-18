@@ -8,7 +8,7 @@ namespace CodingInterviewImplementations.Tests
     public class StringSolutionsTests
     {
         [Test]
-        public void FindMaxOccurringCharacterLinqTest()
+        public void FindMaxOccurringCharacterLinqTest_EqualsExpectedReturnValue()
         {
             var testData = new[]
             {
@@ -51,7 +51,7 @@ namespace CodingInterviewImplementations.Tests
         [TestCase("abc", "def", false)]
         [TestCase("def", "efg", false)]
         [Parallelizable(ParallelScope.All)]
-        public void IsAnagramTest(string s1, string s2, Boolean expected)
+        public void IsAnagramTest_EqualsExpectedReturnValue(string s1, string s2, Boolean expected)
         {
             Assert.That(StringSolutions.IsAnagramWithDictionaryFrequency(s1, s2), Is.EqualTo(expected));
             Assert.That(StringSolutions.IsAnagramWithSorting(s1, s2), Is.EqualTo(expected));
@@ -62,7 +62,7 @@ namespace CodingInterviewImplementations.Tests
         [TestCase("aaaabbaa", "aabbaa")]
         [TestCase("abc", "a")]
         [Parallelizable(ParallelScope.All)]
-        public void GetLongestPalindromeSubstringTest(string input, string expected)
+        public void GetLongestPalindromeSubstringTest_EqualsExpectedReturnValue(string input, string expected)
         {
             Assert.That(StringSolutions.GetLongestPalindromeSubstring(input), Is.EqualTo(expected));
         }
@@ -74,7 +74,7 @@ namespace CodingInterviewImplementations.Tests
         [TestCase("LVIII", 58)]
         [TestCase("MCMXCIV", 1994)]
         [Parallelizable(ParallelScope.All)]
-        public void RomanNumeralToIntegerTest(string input, int expected)
+        public void RomanNumeralToIntegerTest_EqualsExpectedReturnValue(string input, int expected)
         {
             Assert.That(StringSolutions.RomanNumeralToInteger(input), Is.EqualTo(expected));
         }

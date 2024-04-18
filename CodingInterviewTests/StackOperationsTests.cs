@@ -5,7 +5,7 @@ namespace CodingInterviewImplementations.Tests
     public class StackOperationsTests
     {
         [Test]
-        public void TestIsBalancedBrackets()
+        public void TestIsBalancedBrackets_EqualsExpectedReturnValue()
         {
             var testCases = new[]
             {
