@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.NetworkInformation;
+using System.Text;
 
 namespace CodingInterviewImplementations
 {
@@ -253,6 +254,94 @@ namespace CodingInterviewImplementations
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Counts the number of vowels and consonants in a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static Dictionary<string, int>? FindVowelsAndConsonants(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return default;
+            }
+
+            var vowels = new HashSet<char> { 'a', 'e', 'i', 'o', 'u' };
+            var vowelsAndConsonants = new Dictionary<string, int>
+            {
+                { "Vowels", 0 },
+                { "Consonants", 0 }
+            };
+
+            foreach (char c in input)
+            {
+                if (char.IsLetter(c))
+                {
+                    if (vowels.Contains(char.ToLower(c)))
+                    {
+                        vowelsAndConsonants["Vowels"]++;
+                    }
+                    else
+                    {
+                        vowelsAndConsonants["Consonants"]++;
+                    }
+                }
+            }
+
+            return vowelsAndConsonants;
+        }
+
+        /// <summary>
+        /// Converts a byte array to a string.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string ByteArrayToString(byte[] bytes)
+        {
+            return BitConverter.ToString(bytes).Replace("-", "");
+        }
+
+        /// <summary>
+        /// Removes a character from a string using LINQ.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static string RemoveCharacterFromStringLinq(string input, char c)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            return new string(input.Where(ch => ch != c).ToArray());
+        }
+
+        /// <summary>
+        /// Removes a character from a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static string RemoveCharacterFromString(string input, char c)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            StringBuilder sb = new();
+            foreach (char ch in input)
+            {
+                if (ch != c)
+                {
+                    sb.Append(ch);
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }
