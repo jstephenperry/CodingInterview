@@ -35,5 +35,39 @@
             }
             return stack.Count == 0;
         }
+
+        /// <summary>
+        /// Inverts a stack using recursion.
+        /// </summary>
+        /// <param name="stack"></param>
+        public static void InvertStack(Stack<int> stack)
+        {
+            if (stack.Count == 0)
+            {
+                return;
+            }
+
+            int temp = stack.Pop();
+            InvertStack(stack);
+            InsertAtBottom(stack, temp);
+        }
+
+        /// <summary>
+        /// Inserts a value at the bottom of a stack.
+        /// </summary>
+        /// <param name="stack"></param>
+        /// <param name="value"></param>
+        private static void InsertAtBottom(Stack<int> stack, int value)
+        {
+            if (stack.Count == 0)
+            {
+                stack.Push(value);
+                return;
+            }
+
+            int temp = stack.Pop();
+            InsertAtBottom(stack, value);
+            stack.Push(temp);
+        }
     }
 }
