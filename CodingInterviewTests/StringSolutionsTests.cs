@@ -1,7 +1,4 @@
-﻿using NUnit.Framework;
-using CodingInterviewImplementations;
-
-namespace CodingInterviewImplementations.Tests
+﻿namespace CodingInterviewImplementations.Tests
 {
     [TestFixture]
     [TestOf(typeof(StringSolutions))]
@@ -53,9 +50,12 @@ namespace CodingInterviewImplementations.Tests
         [Parallelizable(ParallelScope.All)]
         public void IsAnagramTest_EqualsExpectedReturnValue(string s1, string s2, Boolean expected)
         {
-            Assert.That(StringSolutions.IsAnagramWithDictionaryFrequency(s1, s2), Is.EqualTo(expected));
-            Assert.That(StringSolutions.IsAnagramWithSorting(s1, s2), Is.EqualTo(expected));
-            Assert.That(StringSolutions.IsAnagramWithLinqSorting(s1, s2), Is.EqualTo(expected));
+            Assert.Multiple(() =>
+            {
+                Assert.That(StringSolutions.IsAnagramWithDictionaryFrequency(s1, s2), Is.EqualTo(expected));
+                Assert.That(StringSolutions.IsAnagramWithSorting(s1, s2), Is.EqualTo(expected));
+                Assert.That(StringSolutions.IsAnagramWithLinqSorting(s1, s2), Is.EqualTo(expected));
+            });
         }
 
         [Test]
