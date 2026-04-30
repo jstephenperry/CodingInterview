@@ -1,54 +1,63 @@
 namespace CodingInterviewImplementations.Mathematical
 {
-    public class MovingAverage
+    public static class MovingAverage
     {
+        private const int DefaultWindow = 3;
+
+        /// <summary>Computes a 3-element simple moving average over <paramref name="values"/>.</summary>
+        public static double[] CalculateMovingAverage(int[] values) =>
+            CalculateMovingAverage(values, DefaultWindow);
+
+        /// <summary>Computes a 3-element simple moving average over <paramref name="values"/>.</summary>
+        public static List<double> CalculateMovingAverage(List<int> values) =>
+            CalculateMovingAverage(values, DefaultWindow);
+
         /// <summary>
-        /// Calculate the moving average of three elements at a time in an array
+        /// Computes a simple moving average with window size <paramref name="windowSize"/> over <paramref name="values"/>.
+        /// Output length is <c>values.Length - windowSize + 1</c>; an empty array is returned when the input is shorter than the window.
         /// </summary>
-        public static double[] CalculateMovingAverage(int[] arr)
+        /// <exception cref="ArgumentNullException"><paramref name="values"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="windowSize"/> is non-positive.</exception>
+        public static double[] CalculateMovingAverage(int[] values, int windowSize)
         {
-            return CalculateMovingAverage(arr, 3);
+            ArgumentNullException.ThrowIfNull(values);
+            return CalculateMovingAverageCore((IReadOnlyList<int>)values, windowSize);
         }
 
         /// <summary>
-        /// Calculate the moving average of three elements at a time in a list
+        /// Computes a simple moving average with window size <paramref name="windowSize"/> over <paramref name="values"/>.
         /// </summary>
-        public static List<double> CalculateMovingAverage(List<int> arr)
+        public static List<double> CalculateMovingAverage(List<int> values, int windowSize)
         {
-            return CalculateMovingAverage(arr, 3);
+            ArgumentNullException.ThrowIfNull(values);
+            double[] result = CalculateMovingAverageCore(values, windowSize);
+            return new List<double>(result);
         }
 
-        /// <summary>
-        /// Calculate the moving average of n elements at a time in an array
-        /// </summary>
-        public static double[] CalculateMovingAverage(int[] arr, int n)
+        private static double[] CalculateMovingAverageCore(IReadOnlyList<int> values, int windowSize)
         {
-            if (arr == null) throw new ArgumentNullException(nameof(arr));
-            if (n <= 0) throw new ArgumentOutOfRangeException(nameof(n));
-            if (arr.Length < n) return Array.Empty<double>();
-
-            double[] result = new double[arr.Length - n + 1];
-            long sum = 0;
-            for (int i = 0; i < n; i++)
+            if (windowSize <= 0)
             {
-                sum += arr[i];
+                throw new ArgumentOutOfRangeException(nameof(windowSize), "Window size must be positive.");
             }
-            result[0] = (double)sum / n;
+            if (values.Count < windowSize)
+            {
+                return Array.Empty<double>();
+            }
+
+            double[] result = new double[values.Count - windowSize + 1];
+            long sum = 0;
+            for (int i = 0; i < windowSize; i++)
+            {
+                sum += values[i];
+            }
+            result[0] = (double)sum / windowSize;
             for (int i = 1; i < result.Length; i++)
             {
-                sum += arr[i + n - 1] - arr[i - 1];
-                result[i] = (double)sum / n;
+                sum += values[i + windowSize - 1] - values[i - 1];
+                result[i] = (double)sum / windowSize;
             }
             return result;
-        }
-
-        /// <summary>
-        /// Calculate the moving average of n elements at a time in a list
-        /// </summary>
-        public static List<double> CalculateMovingAverage(List<int> arr, int n)
-        {
-            if (arr == null) throw new ArgumentNullException(nameof(arr));
-            return CalculateMovingAverage(arr.ToArray(), n).ToList();
         }
     }
 }

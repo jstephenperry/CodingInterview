@@ -1,41 +1,29 @@
-﻿namespace CodingInterviewImplementations.Tests
+namespace CodingInterviewImplementations.Tests
 {
     [TestFixture]
     [TestOf(typeof(StringSolutions))]
     public class StringSolutionsTests
     {
         [Test]
-        public void FindMaxOccurringCharacterLinqTest_EqualsExpectedReturnValue()
+        public void FindMaxOccurringCharacter_ReturnsExpected()
         {
-            var testData = new[]
+            var testData = new (string Input, (char, int)? Expected)[]
             {
-                ("", default(KeyValuePair<char, int>)),
-                ("a", new KeyValuePair<char, int>('a', 1)),
-                ("aa", new KeyValuePair<char, int>('a', 2)),
-                ("ab", new KeyValuePair<char, int>('a', 1)),
-                ("aab", new KeyValuePair<char, int>('a', 2)),
-                ("abb", new KeyValuePair<char, int>('b', 2)),
-                ("aabb", new KeyValuePair<char, int>('a', 2)),
-                ("aaabbb", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbccc", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccddd", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeee", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefff", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggg", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhh", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiii", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiiijjj", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiiijjjkkk", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiiijjjkkklll", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmm", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmnnn", new KeyValuePair<char, int>('a', 3)),
-                ("aaabbbcccdddeeefffggghhhiiijjjjjkkklllmmnnnooo", new KeyValuePair<char, int>('j', 5)),
-                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmnnnoooo", new KeyValuePair<char, int>('o', 4))
+                ("", null),
+                ("a", ('a', 1)),
+                ("aa", ('a', 2)),
+                ("ab", ('a', 1)),
+                ("aab", ('a', 2)),
+                ("abb", ('b', 2)),
+                ("aabb", ('a', 2)),
+                ("aaabbb", ('a', 3)),
+                ("aaabbbcccdddeeefffggghhhiiijjjjjkkklllmmnnnooo", ('j', 5)),
+                ("aaabbbcccdddeeefffggghhhiiijjjkkklllmmnnnoooo", ('o', 4))
             };
 
             foreach (var (input, expected) in testData)
             {
-                Assert.That(StringSolutions.FindMaxOccurringCharacterLinq(input), Is.EqualTo(expected));
+                Assert.That(StringSolutions.FindMaxOccurringCharacter(input), Is.EqualTo(expected));
             }
         }
 
@@ -44,11 +32,12 @@
         [TestCase("cat", "act", true)]
         [TestCase("aide", "idea", true)]
         [TestCase("melon", "lemon", true)]
+        [TestCase("", "", true)]
         [TestCase("a", "b", false)]
         [TestCase("abc", "def", false)]
         [TestCase("def", "efg", false)]
         [Parallelizable(ParallelScope.All)]
-        public void IsAnagramTest_EqualsExpectedReturnValue(string s1, string s2, Boolean expected)
+        public void IsAnagram_AllImplementationsAgree(string s1, string s2, bool expected)
         {
             Assert.Multiple(() =>
             {
@@ -59,6 +48,18 @@
         }
 
         [Test]
+        public void IsAnagram_NullInputs_Throws()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(() => StringSolutions.IsAnagramWithDictionaryFrequency(null!, "a"), Throws.ArgumentNullException);
+                Assert.That(() => StringSolutions.IsAnagramWithSorting("a", null!), Throws.ArgumentNullException);
+                Assert.That(() => StringSolutions.IsAnagramWithLinqSorting(null!, null!), Throws.ArgumentNullException);
+            });
+        }
+
+        [Test]
+        [TestCase("", "")]
         [TestCase("aaaabbaa", "aabbaa")]
         [TestCase("abc", "a")]
         [TestCase("a", "a")]
@@ -69,71 +70,114 @@
         [TestCase("aaaaa", "aaaaa")]
         [TestCase("xyzracecarxyz", "racecar")]
         [Parallelizable(ParallelScope.All)]
-        public void GetLongestPalindromeSubstringTest_EqualsExpectedReturnValue(string input, string expected)
+        public void GetLongestPalindromeSubstring_ReturnsExpected(string input, string expected)
         {
             Assert.That(StringSolutions.GetLongestPalindromeSubstring(input), Is.EqualTo(expected));
         }
 
         [Test]
+        [TestCase("I", 1)]
         [TestCase("III", 3)]
         [TestCase("IV", 4)]
         [TestCase("IX", 9)]
         [TestCase("LVIII", 58)]
         [TestCase("MCMXCIV", 1994)]
+        [TestCase("MMMCMXCIX", 3999)]
         [Parallelizable(ParallelScope.All)]
-        public void RomanNumeralToIntegerTest_EqualsExpectedReturnValue(string input, int expected)
+        public void RomanNumeralToInteger_ReturnsExpected(string input, int expected)
         {
             Assert.That(StringSolutions.RomanNumeralToInteger(input), Is.EqualTo(expected));
         }
 
         [Test]
-        public void FindMaxOccurringWordLinqTest()
+        public void RomanNumeralToInteger_RejectsInvalidInput()
         {
-            var testCases = new[]
+            Assert.Multiple(() =>
             {
-                ("a a b b b c c c c c", new KeyValuePair<string, int>("c", 5)),
-                ("the quick brown fox", new KeyValuePair<string, int>("the", 1)),
-                ("one two two three three three", new KeyValuePair<string, int>("three", 3)),
-                ("repeat repeat repeat", new KeyValuePair<string, int>("repeat", 3))
+                Assert.That(() => StringSolutions.RomanNumeralToInteger(""), Throws.ArgumentException);
+                Assert.That(() => StringSolutions.RomanNumeralToInteger("iv"), Throws.ArgumentException);
+                Assert.That(() => StringSolutions.RomanNumeralToInteger("IIA"), Throws.ArgumentException);
+                Assert.That(() => StringSolutions.RomanNumeralToInteger(null!), Throws.ArgumentNullException);
+            });
+        }
+
+        [Test]
+        public void FindMaxOccurringWord_ReturnsExpected()
+        {
+            var cases = new (string Text, (string, int)? Expected)[]
+            {
+                ("a a b b b c c c c c", ("c", 5)),
+                ("the quick brown fox", ("the", 1)),
+                ("one two two three three three", ("three", 3)),
+                ("repeat repeat repeat", ("repeat", 3)),
+                ("  many   spaces   here  ", ("many", 1)),
             };
 
-            foreach (var (input, expected) in testCases)
+            foreach (var (text, expected) in cases)
             {
-                Assert.That(StringSolutions.FindMaxOccurringWordLinq([.. input.Split(" ")]), Is.EqualTo(expected));
+                Assert.That(StringSolutions.FindMaxOccurringWord(text), Is.EqualTo(expected));
             }
         }
 
         [Test]
-        public void FindMaxOccurringWordLinq_NullOrEmpty_ReturnsDefault()
+        public void FindMaxOccurringWord_EmptyText_ReturnsNull()
         {
             Assert.Multiple(() =>
             {
-                Assert.That(StringSolutions.FindMaxOccurringWordLinq(null!), Is.EqualTo(default(KeyValuePair<string, int>)));
-                Assert.That(StringSolutions.FindMaxOccurringWordLinq(new List<string>()), Is.EqualTo(default(KeyValuePair<string, int>)));
+                Assert.That(StringSolutions.FindMaxOccurringWord(""), Is.Null);
+                Assert.That(StringSolutions.FindMaxOccurringWord("   \t\n  "), Is.Null);
+                Assert.That(() => StringSolutions.FindMaxOccurringWord(null!), Throws.ArgumentNullException);
             });
         }
 
         [Test]
-        public void GetWordCountTest()
+        public void GetWordCount_ReturnsExpected()
         {
             Assert.Multiple(() =>
             {
+                Assert.That(StringSolutions.GetWordCount(null), Is.EqualTo(0));
                 Assert.That(StringSolutions.GetWordCount(""), Is.EqualTo(0));
+                Assert.That(StringSolutions.GetWordCount("   "), Is.EqualTo(0));
                 Assert.That(StringSolutions.GetWordCount("hello"), Is.EqualTo(1));
                 Assert.That(StringSolutions.GetWordCount("hello world"), Is.EqualTo(2));
                 Assert.That(StringSolutions.GetWordCount("  many   spaces   here  "), Is.EqualTo(3));
+                Assert.That(StringSolutions.GetWordCount("tab\tseparated\nlines"), Is.EqualTo(3));
             });
         }
 
         [Test]
-        public void FindVowelsAndConsonantsTest()
+        public void CountVowelsAndConsonants_ReturnsExpected()
         {
-            var result = StringSolutions.FindVowelsAndConsonants("Hello World");
-            Assert.That(result, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(result!["Vowels"], Is.EqualTo(3));
-                Assert.That(result["Consonants"], Is.EqualTo(7));
+                Assert.That(StringSolutions.CountVowelsAndConsonants("Hello World"), Is.EqualTo(new LetterCounts(3, 7)));
+                Assert.That(StringSolutions.CountVowelsAndConsonants(""), Is.EqualTo(new LetterCounts(0, 0)));
+                Assert.That(StringSolutions.CountVowelsAndConsonants("123!?"), Is.EqualTo(new LetterCounts(0, 0)));
+                Assert.That(StringSolutions.CountVowelsAndConsonants("AEIOU"), Is.EqualTo(new LetterCounts(5, 0)));
+            });
+        }
+
+        [Test]
+        public void BytesToHex_ReturnsUppercaseUnseparatedHex()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(StringSolutions.BytesToHex(Array.Empty<byte>()), Is.EqualTo(""));
+                Assert.That(StringSolutions.BytesToHex(new byte[] { 0xDE, 0xAD, 0xBE, 0xEF }), Is.EqualTo("DEADBEEF"));
+                Assert.That(StringSolutions.BytesToHex(new byte[] { 0x00, 0x0F }), Is.EqualTo("000F"));
+            });
+        }
+
+        [Test]
+        public void RemoveCharacterFromString_BothImplementationsAgree()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(StringSolutions.RemoveCharacterFromString("hello world", 'l'), Is.EqualTo("heo word"));
+                Assert.That(StringSolutions.RemoveCharacterFromStringLinq("hello world", 'l'), Is.EqualTo("heo word"));
+                Assert.That(StringSolutions.RemoveCharacterFromString("", 'x'), Is.EqualTo(""));
+                Assert.That(StringSolutions.RemoveCharacterFromStringLinq("", 'x'), Is.EqualTo(""));
+                Assert.That(StringSolutions.RemoveCharacterFromString("abc", 'z'), Is.EqualTo("abc"));
             });
         }
     }

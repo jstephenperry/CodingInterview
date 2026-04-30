@@ -5,7 +5,11 @@ namespace CodingInterviewImplementations
 {
     public static class JsonUtils
     {
-        public static bool IsValidJson(string input)
+        /// <summary>
+        /// Returns <see langword="true"/> when <paramref name="input"/> is a syntactically valid JSON document
+        /// (object, array, or any other JSON value).
+        /// </summary>
+        public static bool IsValidJson(string? input)
         {
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -23,10 +27,21 @@ namespace CodingInterviewImplementations
             }
         }
 
+        /// <summary>
+        /// Evaluates <paramref name="jsonPath"/> against <paramref name="jsonString"/> and returns the matched value
+        /// as a CLR object (primitive, <see cref="JArray"/>, or <see cref="JObject"/>), or <see langword="null"/> when
+        /// the path does not match.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Either argument is <see langword="null"/>.</exception>
+        /// <exception cref="JsonReaderException"><paramref name="jsonString"/> is not valid JSON.</exception>
         public static object? GetJsonValueByJsonPath(string jsonString, string jsonPath)
         {
-            JObject json = JObject.Parse(jsonString);
-            return json.SelectToken(jsonPath)?.ToObject<object>() ?? null;
+            ArgumentNullException.ThrowIfNull(jsonString);
+            ArgumentNullException.ThrowIfNull(jsonPath);
+
+            // JToken.Parse handles object, array, and primitive roots — JObject.Parse rejects non-object roots.
+            JToken root = JToken.Parse(jsonString);
+            return root.SelectToken(jsonPath)?.ToObject<object>();
         }
     }
 }
