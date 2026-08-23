@@ -1,76 +1,88 @@
 ﻿namespace CodingInterviewImplementations.Mathematical
 {
-    public class MovingAverage
+    /// <summary>
+    /// Simple moving averages over a sequence of integers.
+    /// </summary>
+    /// <remarks>
+    /// All four overloads share one sliding-window core. The window total is carried between
+    /// positions rather than recomputed, which makes the work O(n) instead of O(n * window).
+    /// </remarks>
+    public static class MovingAverage
     {
+        private const int DefaultWindow = 3;
+
         /// <summary>
-        /// Calculate the moving average of three elements at a time in an array
+        /// Calculates the moving average of three elements at a time.
         /// </summary>
-        /// <param name="arr"></param>
-        /// <returns></returns>
         public static double[] CalculateMovingAverage(int[] arr)
         {
-            double[] result = new double[arr.Length - 2];
-            for (int i = 0; i < arr.Length - 2; i++)
-            {
-                result[i] = (arr[i] + arr[i + 1] + arr[i + 2]) / 3.0;
-            }
-            return result;
+            return CalculateMovingAverage(arr, DefaultWindow);
         }
 
         /// <summary>
-        /// Calculate the moving average of three elements at a time in a list
+        /// Calculates the moving average of three elements at a time.
         /// </summary>
-        /// <param name="arr"></param>
-        /// <returns></returns>
         public static List<double> CalculateMovingAverage(List<int> arr)
         {
-            List<double> result = new();
-            for (int i = 0; i < arr.Count - 2; i++)
-            {
-                result.Add((arr[i] + arr[i + 1] + arr[i + 2]) / 3.0);
-            }
-            return result;
+            return CalculateMovingAverage(arr, DefaultWindow);
         }
 
         /// <summary>
-        /// Calculate the moving average of n elements at a time in an array
+        /// Calculates the moving average of <paramref name="n"/> elements at a time.
         /// </summary>
-        /// <param name="arr"></param>
-        /// <param name="n"></param>
-        /// <returns></returns>
+        /// <param name="arr">The source values.</param>
+        /// <param name="n">The window size. Must be at least one.</param>
+        /// <returns>
+        /// One average per window position, or an empty array when the source is shorter than the
+        /// window. Previously a source shorter than the window threw <see cref="OverflowException"/>
+        /// from a negative array length.
+        /// </returns>
         public static double[] CalculateMovingAverage(int[] arr, int n)
         {
-            double[] result = new double[arr.Length - n + 1];
-            for (int i = 0; i < arr.Length - n + 1; i++)
-            {
-                double sum = 0;
-                for (int j = 0; j < n; j++)
-                {
-                    sum += arr[i + j];
-                }
-                result[i] = sum / n;
-            }
-            return result;
+            ArgumentNullException.ThrowIfNull(arr);
+            return Calculate(arr, n);
         }
 
         /// <summary>
-        /// Calculate the moving average of n elements at a time in a list
+        /// Calculates the moving average of <paramref name="n"/> elements at a time.
         /// </summary>
-        /// <param name="arr"></param>
-        /// <param name="n"></param>
-        /// <returns></returns>
+        /// <param name="arr">The source values.</param>
+        /// <param name="n">The window size. Must be at least one.</param>
+        /// <returns>
+        /// One average per window position, or an empty list when the source is shorter than the
+        /// window.
+        /// </returns>
         public static List<double> CalculateMovingAverage(List<int> arr, int n)
         {
-            List<double> result = new();
-            for (int i = 0; i < arr.Count - n + 1; i++)
+            ArgumentNullException.ThrowIfNull(arr);
+            return [.. Calculate(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(arr), n)];
+        }
+
+        private static double[] Calculate(ReadOnlySpan<int> values, int n)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(n, 1);
+
+            if (values.Length < n)
             {
-                double sum = 0;
-                for (int j = 0; j < n; j++)
-                {
-                    sum += arr[i + j];
-                }
-                result.Add(sum / n);
+                return [];
             }
+
+            double[] result = new double[values.Length - n + 1];
+
+            // Sum widened to long so that a window of large values cannot overflow mid-accumulation.
+            long windowTotal = 0;
+            for (int i = 0; i < n; i++)
+            {
+                windowTotal += values[i];
+            }
+            result[0] = (double)windowTotal / n;
+
+            for (int i = n; i < values.Length; i++)
+            {
+                windowTotal += values[i] - values[i - n];
+                result[i - n + 1] = (double)windowTotal / n;
+            }
+
             return result;
         }
     }

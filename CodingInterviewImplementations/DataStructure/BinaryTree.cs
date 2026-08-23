@@ -1,128 +1,188 @@
 ﻿namespace CodingInterviewImplementations.DataStructure
 {
-    public class BinaryTree<T>
+    /// <summary>
+    /// An unbalanced binary search tree.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The element type. Constrained to <see cref="IComparable{T}"/> so that an incomparable type is
+    /// rejected at compile time rather than throwing from <see cref="Comparer{T}.Default"/> on the
+    /// first insert.
+    /// </typeparam>
+    /// <remarks>
+    /// This is deliberately a plain BST with no rebalancing, so sorted input degenerates into a
+    /// linked list and operations become O(n). Use <see cref="SortedSet{T}"/> when balanced
+    /// behaviour matters.
+    /// <para>
+    /// Every operation is iterative. Recursive versions were bounded by the height of the tree, and
+    /// because the tree is unbalanced that height equals the element count for sorted input: adding
+    /// twenty thousand ascending values overflowed the stack.
+    /// </para>
+    /// </remarks>
+    public class BinaryTree<T> where T : IComparable<T>
     {
-        public BinaryTreeNode<T> Root { get; set; }
+        /// <summary>
+        /// The root of the tree, or null when the tree is empty.
+        /// </summary>
+        public BinaryTreeNode<T>? Root { get; set; }
 
-        public BinaryTree()
-        {
-            Root = null;
-        }
+        /// <summary>
+        /// The number of values currently in the tree.
+        /// </summary>
+        public int Count { get; private set; }
 
+        /// <summary>
+        /// Inserts a value. Duplicates are permitted and are placed in the right subtree.
+        /// </summary>
         public void Add(T value)
         {
+            var node = new BinaryTreeNode<T>(value);
+            Count++;
+
             if (Root == null)
             {
-                Root = new BinaryTreeNode<T>(value);
+                Root = node;
+                return;
             }
-            else
-            {
-                BinaryTree<T>.Add(value, Root);
-            }
-        }
 
-        private static void Add(T value, BinaryTreeNode<T> node)
-        {
-            if (Comparer<T>.Default.Compare(value, node.Value) < 0)
+            BinaryTreeNode<T> current = Root;
+            while (true)
             {
-                if (node.Left == null)
+                if (Compare(value, current.Value) < 0)
                 {
-                    node.Left = new BinaryTreeNode<T>(value);
+                    if (current.Left == null)
+                    {
+                        current.Left = node;
+                        return;
+                    }
+
+                    current = current.Left;
                 }
                 else
                 {
-                    BinaryTree<T>.Add(value, node.Left);
+                    if (current.Right == null)
+                    {
+                        current.Right = node;
+                        return;
+                    }
+
+                    current = current.Right;
                 }
             }
-            else
+        }
+
+        /// <summary>
+        /// Removes one occurrence of a value.
+        /// </summary>
+        /// <returns>True if a matching value was found and removed.</returns>
+        public bool Remove(T value)
+        {
+            BinaryTreeNode<T>? parent = null;
+            BinaryTreeNode<T>? node = Root;
+
+            while (node != null)
             {
-                if (node.Right == null)
+                int comparison = Compare(value, node.Value);
+                if (comparison == 0)
                 {
-                    node.Right = new BinaryTreeNode<T>(value);
-                }
-                else
-                {
-                    BinaryTree<T>.Add(value, node.Right);
-                }
-            }
-        }
-
-        public void Remove(T value)
-        {
-            Root = BinaryTree<T>.Remove(value, Root);
-        }
-
-        private static BinaryTreeNode<T> Remove(T value, BinaryTreeNode<T> node)
-        {
-            if (node == null)
-            {
-                return null;
-            }
-
-            if (Comparer<T>.Default.Compare(value, node.Value) < 0)
-            {
-                node.Left = BinaryTree<T>.Remove(value, node.Left);
-            }
-            else if (Comparer<T>.Default.Compare(value, node.Value) > 0)
-            {
-                node.Right = BinaryTree<T>.Remove(value, node.Right);
-            }
-            else
-            {
-                if (node.Left == null)
-                {
-                    return node.Right;
-                }
-                else if (node.Right == null)
-                {
-                    return node.Left;
+                    break;
                 }
 
-                node.Value = BinaryTree<T>.MinValue(node.Right);
-                node.Right = BinaryTree<T>.Remove(node.Value, node.Right);
+                parent = node;
+                node = comparison < 0 ? node.Left : node.Right;
             }
 
-            return node;
-        }
-
-        private static T MinValue(BinaryTreeNode<T> node)
-        {
-            T minv = node.Value;
-
-            while (node.Left != null)
-            {
-                minv = node.Left.Value;
-                node = node.Left;
-            }
-
-            return minv;
-        }
-
-        public bool Contains(T value)
-        {
-            return BinaryTree<T>.Contains(value, Root);
-        }
-
-        private static bool Contains(T value, BinaryTreeNode<T> node)
-        {
             if (node == null)
             {
                 return false;
             }
 
-            if (Comparer<T>.Default.Compare(value, node.Value) == 0)
+            if (node.Left != null && node.Right != null)
             {
-                return true;
+                // Two children: overwrite this node with its in-order successor, then fall through
+                // to unlink the successor, which by definition has no left child.
+                BinaryTreeNode<T> successorParent = node;
+                BinaryTreeNode<T> successor = node.Right;
+
+                while (successor.Left != null)
+                {
+                    successorParent = successor;
+                    successor = successor.Left;
+                }
+
+                node.Value = successor.Value;
+                node = successor;
+                parent = successorParent;
             }
 
-            if (Comparer<T>.Default.Compare(value, node.Value) < 0)
+            // node now has at most one child, so it can be spliced out directly.
+            BinaryTreeNode<T>? child = node.Left ?? node.Right;
+
+            if (parent == null)
             {
-                return BinaryTree<T>.Contains(value, node.Left);
+                Root = child;
+            }
+            else if (ReferenceEquals(parent.Left, node))
+            {
+                parent.Left = child;
             }
             else
             {
-                return BinaryTree<T>.Contains(value, node.Right);
+                parent.Right = child;
             }
+
+            Count--;
+            return true;
+        }
+
+        /// <summary>
+        /// Determines whether the tree holds a value.
+        /// </summary>
+        public bool Contains(T value)
+        {
+            BinaryTreeNode<T>? node = Root;
+
+            while (node != null)
+            {
+                // One comparison per node; the previous version compared twice at every step.
+                int comparison = Compare(value, node.Value);
+
+                if (comparison == 0)
+                {
+                    return true;
+                }
+
+                node = comparison < 0 ? node.Left : node.Right;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Walks the tree in order, yielding values from smallest to largest.
+        /// </summary>
+        public IEnumerable<T> InOrder()
+        {
+            // Explicit stack rather than recursion so a degenerate tree cannot overflow.
+            var stack = new Stack<BinaryTreeNode<T>>();
+            BinaryTreeNode<T>? node = Root;
+
+            while (node != null || stack.Count > 0)
+            {
+                while (node != null)
+                {
+                    stack.Push(node);
+                    node = node.Left;
+                }
+
+                node = stack.Pop();
+                yield return node.Value;
+                node = node.Right;
+            }
+        }
+
+        private static int Compare(T left, T right)
+        {
+            return Comparer<T>.Default.Compare(left, right);
         }
     }
 }
