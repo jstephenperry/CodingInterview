@@ -1,7 +1,5 @@
 ﻿namespace CodingInterviewImplementations.Tests
 {
-    [TestFixture]
-    [TestOf(typeof(JsonUtils))]
     public class JsonUtilsTests
     {
         private const string Json = @"{
@@ -29,39 +27,106 @@
             ""spouse"": null
         }";
 
-        [Test]
-        public void IsValidJsonTest()
+        public static TheoryData<string> ValidJson =>
+        [
+            "{}",                       // empty object
+            "[]",                       // empty array
+            "[1, 2, 3]",                // array at the root
+            "123",                      // bare number
+            "true",                     // bare boolean
+            "null",                     // bare null
+            @"""a string""",            // bare string
+            @"{""a"": ""}""}",          // brace inside a string literal
+            @"{""a"": ""[[[""}",        // brackets inside a string literal
+            @"{""a"": ""a \"" quote""}" // escaped quote inside a string literal
+        ];
+
+        public static TheoryData<string?> InvalidJson =>
+        [
+            // The cast disambiguates the collection-expression element: a bare null could bind to
+            // either TheoryData.Add(string?) or TheoryData.Add(TheoryDataRow<string?>).
+            (string?)null,              // null input
+            "",                         // empty input
+            "   ",                      // whitespace only
+            "hello world",              // plain prose
+            "{,,,}",                    // balanced braces but not JSON
+            "()",                       // parentheses are not JSON
+            @"{""a"": 1",               // truncated object
+            @"{""a"": 1,}",             // trailing comma
+            "{a: 1}",                   // unquoted property name
+            "{} {}",                    // trailing content after the document
+            @"{""a"": 1} garbage",      // trailing garbage
+            @"{""a"": ""unterminated}"  // unterminated string
+        ];
+
+        public static TheoryData<string?, string?> BlankArguments => new()
         {
-            Assert.That(JsonUtils.IsValidJson(Json), Is.True);
+            { null, "$.a" },
+            { "", "$.a" },
+            { "   ", "$.a" },
+            { @"{""a"": 1}", null },
+            { @"{""a"": 1}", "" }
+        };
+
+        [Fact]
+        public void IsValidJson_AcceptsAWellFormedDocument()
+        {
+            Assert.True(JsonUtils.IsValidJson(Json));
         }
 
-        [Test]
-        public void GetJsonValueByJsonPathTest()
+        [Theory]
+        [MemberData(nameof(ValidJson))]
+        public void IsValidJson_AcceptsValidJson(string input)
         {
-            // Valid JSONPath expressions
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.firstName"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.firstName"), Is.EqualTo("John"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.lastName"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.lastName"), Is.EqualTo("Smith"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.streetAddress"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.streetAddress"), Is.EqualTo("21 2nd Street"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.city"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.city"), Is.EqualTo("New York"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.state"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.state"), Is.EqualTo("NY"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.postalCode"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.address.postalCode"), Is.EqualTo("10021-3100"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[0].number"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[0].number"), Is.EqualTo("212 555-1234"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[1].number"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[1].number"), Is.EqualTo("646 555-4567"));
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.children"), Is.Not.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.spouse"), Is.Null);
+            // The brace-inside-a-string cases are the ones the old bracket-counting version rejected.
+            Assert.True(JsonUtils.IsValidJson(input), $"expected valid JSON: {input}");
+        }
 
-            // Invalid JSONPath expressions
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.middleName"), Is.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.preferredName"), Is.Null);
-            Assert.That(JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[2]"), Is.Null);
+        [Theory]
+        [MemberData(nameof(InvalidJson))]
+        public void IsValidJson_RejectsInvalidJson(string? input)
+        {
+            // "hello world" and "{,,,}" both passed the old bracket-balance implementation.
+            Assert.False(JsonUtils.IsValidJson(input), $"expected invalid JSON: {input}");
+        }
+
+        [Fact]
+        public void GetJsonValueByJsonPath_ReadsValuesAtEveryDepth()
+        {
+            Assert.Multiple(
+                () => Assert.Equal("John", JsonUtils.GetJsonValueByJsonPath(Json, "$.firstName")),
+                () => Assert.Equal("Smith", JsonUtils.GetJsonValueByJsonPath(Json, "$.lastName")),
+                () => Assert.Equal("21 2nd Street", JsonUtils.GetJsonValueByJsonPath(Json, "$.address.streetAddress")),
+                () => Assert.Equal("New York", JsonUtils.GetJsonValueByJsonPath(Json, "$.address.city")),
+                () => Assert.Equal("NY", JsonUtils.GetJsonValueByJsonPath(Json, "$.address.state")),
+                () => Assert.Equal("10021-3100", JsonUtils.GetJsonValueByJsonPath(Json, "$.address.postalCode")),
+                () => Assert.Equal("212 555-1234", JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[0].number")),
+                () => Assert.Equal("646 555-4567", JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[1].number")),
+                () => Assert.NotNull(JsonUtils.GetJsonValueByJsonPath(Json, "$.children")));
+        }
+
+        [Fact]
+        public void GetJsonValueByJsonPath_ReturnsNullForMissingPathsAndJsonNull()
+        {
+            Assert.Multiple(
+                () => Assert.Null(JsonUtils.GetJsonValueByJsonPath(Json, "$.spouse")),
+                () => Assert.Null(JsonUtils.GetJsonValueByJsonPath(Json, "$.middleName")),
+                () => Assert.Null(JsonUtils.GetJsonValueByJsonPath(Json, "$.preferredName")),
+                () => Assert.Null(JsonUtils.GetJsonValueByJsonPath(Json, "$.phoneNumbers[2]")));
+        }
+
+        [Fact]
+        public void GetJsonValueByJsonPath_SupportsAnArrayAtTheRoot()
+        {
+            // JObject.Parse could not handle this; JToken.Parse can.
+            Assert.Equal(7L, JsonUtils.GetJsonValueByJsonPath(@"[{""id"": 7}]", "$[0].id"));
+        }
+
+        [Theory]
+        [MemberData(nameof(BlankArguments))]
+        public void GetJsonValueByJsonPath_RejectsBlankArguments(string? json, string? path)
+        {
+            Assert.ThrowsAny<ArgumentException>(() => JsonUtils.GetJsonValueByJsonPath(json!, path!));
         }
     }
 }
